@@ -1,0 +1,38 @@
+DICTIONNAIRE DE DONNÉES
+
+Contexte
+
+Nous proposons de recenser les informations nécessaires à la réalisation d'un
+système de gestion d'inscription de stagiaires à des actions de formations.
+Dans un premier temps, nous souhaitons connaitre les stagiaires :
+Chaque stagiaire possède un numéro d'inscription.
+Il est identifié pas son état civil (nom, prénom, …)
+On souhaite conserver l'historique du suivi des formations.
+Les formations sont identifiées par un numéro national et un intitulé.
+Une formation peut viser l'obtention d'un titre professionnel dont on doit spécifier le
+niveau.
+La durée d'une formation est la même pour tous les stagiaires, la date de fin
+dépendant de la date de début.
+
+Travail à réaliser :
+
+1. Réaliser le dictionnaire des données (n'oubliez pas de mentionner le type)
+2. Comparer votre travail avec la production des autres stagiaires.
+
+
+| ENTIER / Libelle | Code              | Type               
+|----------------- |-------------------|--------------------- 
+| stagiaire        | numInscription    | INT                   
+|                  | nom               | VARCHAR(255)
+|                  | prénom            | VARCHAR (255)                   
+|----------------- |-------------------|---------------------
+| historiqueForm   | numNational       | INT                  
+|                  | intitulé          | VARCHAR(255)                    
+|                  | titreProfessionnel| BOOLEAN
+|                  | dateDébut         | DATE
+|                  | dateFin           | DATE
+|                  | niveau            | VARCHAR(255)
+
+
+
+

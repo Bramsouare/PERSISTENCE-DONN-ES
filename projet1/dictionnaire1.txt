@@ -1,0 +1,40 @@
+DICTIONNAIRE DE DONNÉES
+
+Contexte
+
+Une région voyant son activité touristique grandir, souhaite mettre en place une
+structure permettant de suivre l'état de ses plages.
+Dans un premier temps, elle souhaite connaître toutes ses plages :
+• chaque plage appartient à une ville
+• pour une plage, on connaîtra :
+• sa longueur en km
+• la nature du terrain : sable fin, rochers, galets, ... sachant qu'il peut y avoir des
+plages avec sable et rochers
+
+Le suivi se fera par département (uniquement les départements de la région).
+Un responsable région sera nommé : on en connaitra son nom et son prénom.
+Une ville est identifiée par son code postal et le nombre de touristes annuel qu'elle
+reçoit, doit être connu.
+
+Travail à faire :
+1. Réaliser le dictionnaire des données.
+2. Vérifier le dictionnaire obtenu avec le corrigé proposé
+
+
+| ENTIER / Libelle | Code              | Type               
+|----------------- |-------------------|--------------------- 
+| plage            | codePostale       | ENTIER(5)                   
+|                  | longueur          | DECIMAL(6,3)                    
+|----------------- |-------------------|---------------------
+| ville            | codePostale       | ENTIER(5)                   
+|                  | nomVille          | VARCHAR(50)                     
+|                  | touristesAnuelle  | INT                    
+|----------------- |-------------------|---------------------
+| nature           | sable fin,        | VARCHAR(255)                  
+|                  | rochers,          | VARCHAR(255)
+|                  | galets            | VARCHAR(255)                    
+|----------------- |-------------------|---------------------
+| département      | numDept           | ENTIER(2)                    
+|                  | nomResponsable    | VARCHAR(255)                    
+|                  | PrenomResponsable | VARCHAR(255)
+
