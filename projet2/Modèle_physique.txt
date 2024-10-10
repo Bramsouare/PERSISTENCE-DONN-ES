@@ -1,0 +1,23 @@
+MODÈLE PHYSIQUE
+
+CREATE TABLE personne(
+
+    id_personne COUNTER,
+    nom VARCHAR(255) NOT NULL,
+    prenom VARCHAR(255) NOT NULL,
+    ...
+    PRIMARY KEY id_pays
+    PRIMARY KEY id_type
+)
+
+CREATE TABLE pays (
+
+    id_pays COUNTER,
+    label VARCHAR(255) NOT NULL,
+)
+
+CREATE TABLE type(
+
+    id_type COUNTER,
+    label VARCHAR(255) NOT NULL,
+)
