@@ -1,0 +1,231 @@
+1.Rechercher le prénom des employés et le numéro de la région de leur
+département.
+
+SELECT 
+    dept.nodept AS numero_departement,
+    dept.nom AS nom_departement,
+    employe.nom AS nom_employe
+FROM 
+	employe 
+JOIN 
+	dept ON employe.nodep = dept.nodept
+ORDER BY 
+	dept.nodept
+;
+_________________________________________________________________________________________________________
+
+2. Rechercher le numéro du département, le nom du département, le
+nom des employés classés par numéro de département (renommer les
+tables utilisées)
+
+SELECT 
+    dept.nodept AS numero_departement,
+    dept.nom AS nom_departement,
+    employe.nom AS nom_employe
+FROM 
+    dept 
+JOIN 
+    employe ON dept.nodept = employe.nodep  
+ORDER BY 
+    dept.nodept
+;  
+_________________________________________________________________________________________________________
+
+3.Rechercher le nom des employés du département Distribution
+
+SELECT 
+	employe.nom
+FROM
+	employe 
+JOIN 
+	dept ON employe.nodep = dept.nodept
+WHERE 
+	dept.nom = 'Distribution'
+;
+_________________________________________________________________________________________________________
+
+4. Rechercher le nom et le salaire des employés qui gagnent plus que
+leur patron, et le nom et le salaire de leur patron
+
+SELECT
+    employer.nom AS nom_employe,
+    employer.salaire AS salaire_employe,
+    patron.nom AS nom_patron,
+    patron.salaire AS salaire_patron
+FROM
+    employe AS employer
+JOIN
+    employe AS patron 
+    ON employer.nosup = patron.noemp
+WHERE
+    employer.salaire > patron.salaire
+;
+_________________________________________________________________________________________________________
+
+5. Rechercher le nom et le titre des employés qui ont le même titre que
+Amartakaldire.
+
+SELECT
+    employe.nom AS nom_employe,
+    employe.titre AS titre_employe
+FROM
+    employe
+WHERE
+    employe.titre = 
+    (
+        SELECT
+            titre
+        FROM
+            employe
+        WHERE
+            nom = 'Amartakaldire'
+    )
+;
+_________________________________________________________________________________________________________
+
+6. Rechercher le nom, le salaire et le numéro de département des
+employés qui gagnent plus qu'un seul employé du département 31,
+classés par numéro de département et salaire
+
+SELECT
+    employe.nom AS nom_employe,
+    employe.salaire AS salaire_employe,
+    employe.nodep AS num_dept
+FROM
+	employe
+WHERE
+	employe.salaire > 
+    (
+    	SELECT 
+        	MIN(salaire)
+        FROM
+        	employe
+        WHERE
+        	nodep = 31
+    )
+ORDER BY
+	employe.nodep, employe.salaire
+;
+_________________________________________________________________________________________________________
+
+7. Rechercher le nom, le salaire et le numéro de département des
+employés qui gagnent plus que tous les employés du département 31,
+classés par numéro de département et salaire
+
+SELECT
+    employe.nom AS nom_employe,
+    employe.salaire AS salaire_employe,
+    employe.nodep AS num_dept
+FROM
+	employe
+WHERE
+	employe.salaire > 
+    (
+    	SELECT 
+        	MAX(salaire)
+        FROM
+        	employe
+        WHERE
+        	nodep = 31
+    )
+ORDER BY
+	employe.nodep, employe.salaire
+;
+_________________________________________________________________________________________________________
+
+8. Rechercher le nom et le titre des employés du service 31 qui ont un
+titre que l'on trouve dans le département 32.
+
+SELECT
+    employe31.nom AS nom_employe,
+    employe31.titre AS titre_employe
+FROM
+    employe AS employe31
+WHERE
+    employe31.nodep = 31
+    AND employe31.titre IN 
+    (
+        SELECT DISTINCT
+            employe32.titre
+        FROM
+            employe AS employe32
+        WHERE
+            employe32.nodep = 32
+    )
+;
+_________________________________________________________________________________________________________
+
+9. Rechercher le nom et le titre des employés du service 31 qui ont un
+titre l'on ne trouve pas dans le département 32.
+
+SELECT
+    employe31.nom AS nom_employe,
+    employe31.titre AS titre_employe
+FROM
+    employe AS employe31
+WHERE
+    employe31.nodep = 31
+    AND employe31.titre NOT IN 
+    (
+        SELECT DISTINCT
+            employe32.titre
+        FROM
+            employe AS employe32
+        WHERE
+            employe32.nodep = 32
+    )
+;
+_________________________________________________________________________________________________________
+
+10. Rechercher le nom, le titre et le salaire des employés qui ont le même
+titre et le même salaire que Fairant.
+
+SELECT 
+	nom, titre, salaire
+FROM
+	employe
+WHERE
+	titre = 
+    	(
+            SELECT 
+             	titre
+             FROM
+             	employe
+             WHERE
+             	nom = 'fairent'
+        )
+    AND
+    salaire = 
+    (
+        SELECT
+                    salaire
+                FROM
+                    employe
+                WHERE
+                    nom = 'fairent'
+    )
+;
+
+_________________________________________________________________________________________________________
+
+11.Rechercher le numéro de département, le nom du département, le
+nom des employés, en affichant aussi les départements dans lesquels
+il n'y a personne, classés par numéro de département.
+
+SELECT 
+    dept.nodept AS num_dep,
+    dept.nom AS nom_dept,
+    COALESCE
+    (
+        employe.nom,
+        'Aucun employé'
+    ) 
+    AS nom_employe
+FROM
+    dept
+LEFT JOIN
+    employe ON dept.nodept = employe.nodep
+ORDER BY 
+    dept.nodept ASC
+;
+_________________________________________________________________________________________________________
