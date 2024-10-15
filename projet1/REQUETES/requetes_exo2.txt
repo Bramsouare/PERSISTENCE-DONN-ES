@@ -229,3 +229,184 @@ ORDER BY
     dept.nodept ASC
 ;
 _________________________________________________________________________________________________________
+
+12. Calculer le nombre d'employés de chaque titre
+
+SELECT
+	titre,
+    COUNT(*) AS nombre_employes
+FROM
+	employe
+GROUP BY
+	titre
+;
+_________________________________________________________________________________________________________
+
+13. Calculer la moyenne des salaires et leur somme, par région
+
+SELECT
+	dept.noregion AS region,
+    AVG(employe.salaire) AS moyenne_salaire,
+    SUM(employe.salaire) AS somme_salaire
+FROM
+	employe
+JOIN 
+	dept ON employe.nodep = dept.nodept
+WHERE
+	dept.noregion
+;
+_________________________________________________________________________________________________________
+
+14. Afficher les numéros des départements ayant au moins 3 employés.
+
+SELECT 
+	employe.titre, 
+    COUNT(*) AS nombre_employe
+FROM 
+	employe
+GROUP BY 
+	titre
+HAVING 
+	COUNT(*) > 3
+;
+_________________________________________________________________________________________________________
+
+15. Afficher les lettres qui sont l'initiale d'au moins trois employés.
+
+SELECT 
+    LEFT(employe.nom, 1) AS initiale,
+    COUNT(*) AS nombre_employes
+FROM 
+    employe
+GROUP BY 
+    initiale
+HAVING 
+    COUNT(*) >= 3
+;
+_________________________________________________________________________________________________________
+
+16. Rechercher le salaire maximum et le salaire minimum parmi tous les
+salariés et l'écart entre les deux.
+
+SELECT 
+    'Salaire Max' AS type_salaire,
+    nom,
+    salaire
+FROM 
+    employe
+WHERE 
+    salaire = 
+    (
+        SELECT 
+        	MAX(salaire) 
+        FROM employe
+    )
+
+UNION ALL
+
+SELECT 
+    'Salaire Min' AS type_salaire,
+    nom,
+    salaire
+FROM 
+    employe
+WHERE 
+    salaire = 
+    (
+        SELECT 
+        	MIN(salaire) 
+        FROM 
+        	employe
+    )
+
+UNION ALL
+
+SELECT 
+    'Écart' AS type_salaire,
+    NULL AS nom,
+    (
+        SELECT 
+        	MAX(salaire) 
+        FROM 
+        	employe
+    ) - 
+    (
+        SELECT 
+        	MIN(salaire) 
+        FROM 
+        	employe
+    ) AS ecart_salaire
+;
+_________________________________________________________________________________________________________
+
+17. Rechercher le nombre de titres différents.
+
+SELECT
+	titre,
+    COUNT(*)
+FROM
+	employe
+GROUP BY 
+	titre
+;
+_________________________________________________________________________________________________________
+
+18. Pour chaque titre, compter le nombre d'employés possédant ce titre.
+
+SELECT
+	titre,
+    COUNT(*) AS nombre_employes
+FROM
+	employe
+GROUP BY 
+	titre
+;
+_________________________________________________________________________________________________________
+
+19. Pour chaque nom de département, afficher le nom du département et
+le nombre d'employés.
+
+SELECT
+    dept.nom AS nom_departement,
+    COUNT(employe.noemp) AS nombre_employes
+FROM
+    dept
+LEFT JOIN
+    employe ON dept.nodept = employe.nodep
+GROUP BY
+    dept.nom
+;
+_________________________________________________________________________________________________________
+
+20. Rechercher les titres et la moyenne des salaires par titre dont la
+moyenne est supérieure à la moyenne des salaires des Représentants.
+
+SELECT
+	titre,
+    AVG (employe.salaire) AS moyenne_salaire
+FROM	
+	employe
+GROUP BY
+	titre
+HAVING
+	AVG (salaire) > 
+    	(
+            SELECT
+            	AVG (salaire)
+            FROM
+            	employe
+            WHERE
+            	titre = 'representant'
+        ) 
+;
+_________________________________________________________________________________________________________
+
+21.Rechercher le nombre de salaires renseignés et le nombre de taux de
+commission renseignés.
+
+SELECT 
+    COUNT(salaire) AS nombre_salaires,
+    COUNT(tauxcom) AS nombre_tauxcoms
+FROM 
+    employe
+;
