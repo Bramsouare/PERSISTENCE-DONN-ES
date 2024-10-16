@@ -259,24 +259,24 @@ ________________________________________________________________________________
 17 - Afficher la durée moyenne des réservations par station
 
 SELECT
-    station.sta_nom AS nom_station,
+    sta_nom AS nom_station,
     AVG
     (
         DATEDIFF
         (
-            reservation.res_date_fin, 
-            reservation.res_date_debut
+            res_date_fin, 
+            res_date_debut
         )
     ) 
     AS duree_moyenne_reservation
 FROM
     station
-LEFT JOIN
+JOIN
     hotel ON station.sta_id = hotel.hot_sta_id
-LEFT JOIN
+JOIN
     chambre ON hotel.hot_id = chambre.cha_hot_id
 LEFT JOIN
     reservation ON chambre.cha_id = reservation.res_cha_id
 GROUP BY
-    station.sta_nom
+    sta_nom
 ;
