@@ -1,3 +1,14 @@
+La base "exemple"
+Cette base représente d'une manière simpliste (et remarquablement incomplète) le
+personnel d'une entreprise. Elle n'est pas destinée à être réaliste, mais seulement à être
+simple à comprendre pour une première approche de SQL.
+La table EMPLOYE contient les informations sur les employés.
+La table DEPT recense les différents départements de l'entreprise.
+
+/*****************************************************************
+*********************    LA BASE EXEMPLE    **********************                  
+******************************************************************
+
 1. Afficher toutes les informations concernant les employés
 
 SELECT 
