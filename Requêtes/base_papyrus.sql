@@ -1,3 +1,4 @@
+-- Active: 1729079123053@@127.0.0.1@3306@papyrus
 -- Quelques conseils pour l’écriture d’une clause SELECT :
 --  Déterminer les tables à mettre en jeu, les inclure dans la clause
 -- FROM.
@@ -21,7 +22,7 @@
 ******************************************************************/
 
 
--- 1. Quelles sont les commandes du fournisseur 09120 ?
+1. Quelles sont les commandes du fournisseur 09120 ?
 
 SELECT 
 	numcom
@@ -166,19 +167,18 @@ dans le calcul du total les articles commandés en quantité supérieure
 ou égale à 1000.
 
 SELECT
-	numcom,
-	SUM(qtecde * priuni) AS total
+    numcom,
+    SUM(qtecde * priuni) AS total
 FROM
-	ligcom
+    ligcom
+WHERE
+    qtecde <= 1000
 GROUP BY
-	numcom
+    numcom
 HAVING
-	total > 10000
-	AND
-	qtecde <= 1000
+    total > 10000
 ORDER BY
-	total DESC
-;
+    total DESC;
 
 9.1. Afficher le total par commande
 
@@ -339,27 +339,49 @@ premier caractère commence par R). On affichera le libellé de l’article
 et prix1.
 
 SELECT
-	produit.libart,
-	produit.priuni
+    produit.libart,
+    ligcom.priuni
 FROM
-	produit
+    produit
+JOIN
+	ligcom
+    ON produit.codart = ligcom.codart
 WHERE
-	produit.priuni < 
-	(
-		SELECT
-			MIN(produit.priuni)
-		FROM
-			produit
-		WHERE
-			produit.libart LIKE 'r%'
-	)
+    ligcom.priuni < 
+    (
+        SELECT
+            MIN(ligcom.priuni)
+        FROM
+            produit
+        WHERE
+            produit.libart LIKE 'r%'
+    )
 ;
+
+
 
 ____________________________________________________________________________________________________________________
 
 15. Editer la liste des fournisseurs susceptibles de livrer les produits
 dont le stock est inférieur ou égal à 150 % du stock dalerte. La liste est
 triée par produit puis fournisseur.
+
+SELECT 
+    fournis.numfou,
+    fournis.nomfou,
+    SUM(produit.stkale) AS total_stkale, -- Calcule la somme du stock dalerte
+    SUM(produit.stkphy) AS total_stkphy
+FROM
+    fournis
+JOIN
+    entcom
+    ON fournis.numfou = entcom.numfou
+JOIN
+    ligcom
+    ON entcom.numcom = ligcom.numcom
+JOIN
+    produit
+    ON ligcom.codart = produit.codart
 
 ____________________________________________________________________________________________________________________
 
@@ -368,25 +390,135 @@ le stock est inférieur ou égal à 150 % du stock dalerte et un délai de
 livraison dau plus 30 jours. La liste est triée par fournisseur puis
 produit.
 
+SELECT
+    fournis.numfou,
+    fournis.nomfou,
+    SUM(produit.stkale) AS total_stkale,  -- Calcule la somme du stock dalerte
+    SUM(produit.stkphy) AS total_stkphy
+FROM
+    fournis
+JOIN
+    entcom 
+    ON fournis.numfou = entcom.numfou
+JOIN
+    ligcom 
+    ON entcom.numcom = ligcom.numcom
+JOIN
+    produit 
+    ON ligcom.codart = produit.codart
+WHERE
+    produit.stkphy <= 
+    (
+        SELECT
+            MAX(1.5 * stkale) 
+        FROM
+            produit
+        WHERE
+            stkale > 0
+    )
+    AND 
+        entcom.datcom > 30  
+    GROUP BY
+        fournis.numfou,
+        fournis.nomfou
+    ORDER BY
+        fournis.numfou,
+        total_stkphy DESC
+    LIMIT -- Limite les résultats à 25 lignes
+        0, 25 
+;
+
 ____________________________________________________________________________________________________________________
 
 17. Avec le même type de sélection que ci-dessus, sortir un total des
 stocks par fournisseur trié par total décroissant.
 
-____________________________________________________________________________________________________________________
+SELECT
+    fournis.numfou,
+    fournis.nomfou,
+    SUM(produit.stkale) AS total_stkale,  -- Calcule la somme du stock dalerte
+    SUM(produit.stkphy) AS total_stkphy
+FROM
+    fournis
+JOIN
+    entcom 
+    ON fournis.numfou = entcom.numfou
+JOIN
+    ligcom 
+    ON entcom.numcom = ligcom.numcom
+JOIN
+    produit 
+    ON ligcom.codart = produit.codart
+GROUP BY
+    fournis.numfou,
+    fournis.nomfou
+ORDER BY
+    total_stkphy DESC
+;
+
+_________________________________________________________________________________________________________________
 
 18. En fin dannée, sortir la liste des produits dont la quantité réellement
 commandée dépasse 90% de la quantité annuelle prévue.
+
+SELECT
+    produit.libart,
+    SUM(ligcom.qtecde) AS total_qtecde
+FROM
+    produit
+JOIN
+    ligcom
+    ON produit.codart = ligcom.codart
+GROUP BY
+    produit.libart,
+    produit.qteann
+HAVING
+    total_qtecde > 0.9 * produit.qteann
+  
+ORDER BY
+    total_qtecde DESC
+;
 
 ____________________________________________________________________________________________________________________
 
 19. Calculer le chiffre daffaire par fournisseur pour lannée 93 sachant
 que les prix indiqués sont hors taxes et que le taux de TVA est 20%.
 
+SELECT
+    fournis.numfou,
+    SUM(ligcom.qtecde * ligcom.priuni) AS total_chiffre_affaire
+FROM
+    fournis
+JOIN
+    entcom
+    ON fournis.numfou = entcom.numfou
+JOIN
+    ligcom
+    ON entcom.numcom = ligcom.numcom
+GROUP BY
+    fournis.numfou
+;
+
 ____________________________________________________________________________________________________________________
 
 20. Existe-t-il des lignes de commande non cohérentes avec les produits
-vendus par les fournisseurs. ?
+vendus par les fournisseurs.
+
+SELECT
+    fournis.numfou,
+    fournis.nomfou,
+    ligcom.numcom
+FROM
+    fournis
+JOIN
+    entcom
+    ON fournis.numfou = entcom.numfou
+JOIN
+    ligcom
+    ON entcom.numcom = ligcom.numcom
+ORDER BY
+    ligcom.numcom
+;
 
 
 /*****************************************************************
@@ -396,20 +528,81 @@ vendus par les fournisseurs. ?
 1. Application dune augmentation de tarif de 4% pour le prix 1 et de 2%
 pour le prix2 pour le fournisseur 9180.
 
+UPDATE
+    vente
+SET
+    prix1 = prix1 * 1.04,
+    prix2 = prix2 * 1.02
+WHERE
+    numfou = 9180
+;
+
 ____________________________________________________________________________________________________________________
 
 2. Dans la table vente, mettre à jour le prix2 des articles dont le prix2 est
 null, en affectant a prix2 la valeur de prix1.
 
+UPDATE
+    vente
+SET
+    prix2 = prix1
+WHERE
+    prix2 IS NULL
+;    
 ____________________________________________________________________________________________________________________
 
 3. Mettre à jour le champ obscom en positionnant (*****) pour toutes les
 commandes dont le fournisseur a un indice de satisfaction <5.
 
+UPDATE
+    entcom
+SET
+    obscom = '*****'
+WHERE
+    numfou IN 
+        (
+            SELECT
+                numfou
+            FROM
+                fournis
+            WHERE
+                satisf < 5 
+        )
+;
+
 ____________________________________________________________________________________________________________________
 
 4. Suppression du produit I110.
 
+DELETE
+    FROM
+        vente
+WHERE
+    codart = 'I110'
+;
+
+DELETE
+    FROM
+        produit
+WHERE
+    codart = 'I110'
+;
+
 ____________________________________________________________________________________________________________________
 
 5. Suppression des entête de commande qui nont aucune ligne.
+
+DELETE
+    FROM
+        entcom
+    WHERE   
+        numcom NOT IN
+        (
+            SELECT
+                numcom
+            FROM
+                ligcom
+            WHERE 
+                ligcom.numcom = entcom.numcom
+        )
+;
