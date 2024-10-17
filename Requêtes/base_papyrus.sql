@@ -555,21 +555,20 @@ ________________________________________________________________________________
 commandes dont le fournisseur a un indice de satisfaction <5.
 
 UPDATE
-    entcom
+	entcom
 SET
-    obscom = '*****'
+	obscom = '*****'
 WHERE
-    numfou IN 
-        (
-            SELECT
-                numfou
-            FROM
-                fournis
-            WHERE
-                satisf < 5 
-        )
+	numfou IN
+	(
+		SELECT
+			numfou
+		FROM
+			fournis
+		WHERE
+			satisf < 5
+	)
 ;
-
 ____________________________________________________________________________________________________________________
 
 4. Suppression du produit I110.
@@ -605,3 +604,7 @@ DELETE
          
         )
 ;
+
+
+
+
