@@ -602,7 +602,6 @@ DELETE
                 numcom
             FROM
                 ligcom
-            WHERE 
-                ligcom.numcom = entcom.numcom
+         
         )
 ;
