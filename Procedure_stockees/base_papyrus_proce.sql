@@ -51,7 +51,7 @@ DELIMITER $$
             FROM
                 entcom
             WHERE
-                obscom = 'Commande urgente'
+                obscom != ""
             ;
         END $$
 DELIMITER;
